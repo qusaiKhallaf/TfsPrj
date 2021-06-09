@@ -20,6 +20,7 @@ import {HttpClient, HttpClientModule} from '@angular/common/http';
 import { AdminComponent } from './shareComponent/admin/admin.component';
 import { VisitorComponent } from './shareComponent/visitor/visitor.component';
 import { VisitorDetailsComponent } from './shareComponent/visitor-details/visitor-details.component';
+import { VisitorPageComponent } from './visitor/visitor-page/visitor-page.component';
 
 
 export function HttpLoaderFactory(http: HttpClient): TranslateHttpLoader {
@@ -34,6 +35,7 @@ export function HttpLoaderFactory(http: HttpClient): TranslateHttpLoader {
     AdminComponent,
     VisitorComponent,
     VisitorDetailsComponent,
+    VisitorPageComponent,
     
   ],
   imports: [
