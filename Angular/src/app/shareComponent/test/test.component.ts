@@ -24,7 +24,7 @@ export class TestComponent implements OnInit {
 
 
 
-  constructor(public BackendServiceService: BackendServiceService) {
+  constructor(public Backend: BackendServiceService) {
    
     //translate.addLangs(['ar' , 'en']);
     //translate.setDefaultLang('en');
@@ -32,84 +32,110 @@ export class TestComponent implements OnInit {
     //translate.use(browserLang.match(/en|ar/) ?  browserLang  : 'en' );
     //// translate.getParsedResult('','',{  })
 
-    BackendServiceService.get('https://jsonplaceholder.typicode.com/posts').then(data => {
-    //  this.listOfUser = data;
-       console.log(data);
-    });
+    //Backend.get('https://jsonplaceholder.typicode.com/posts').then(data => {
+    ////  this.listOfUser = data;
+    //   console.log(data);
+    //});
 }
+  feedbackData: any = [];
+  feedback: any = [];
 
+  AdminInfo: any;
 
-   // testData = "qusai";
-
-  // listOfUser :any  ;  
-
-  // constructor(BackendServiceService : BackendServiceService) { 
-  
-    
-  // }
-
+  Email: any;
+  FacebookURL: any;
+  InstagramURL: any;
+  Phone: any;
+  Address: any;
+  Collections: any = [];
   ngOnInit(): void {
+    this.Backend.get('api/Admin/GetFeedback').then(data => {
+      this.feedbackData = data;
+      this.feedback = data.slice(0, 10);
+    });
 
 
+    
+    this.Backend.get('api/Admin/GetAdminInfo').then(data => {
+      this.AdminInfo = data;
+      this.Email = data.Email;
+      this.FacebookURL = data.FacebookURL;
+      this.InstagramURL = data.InstagramURL;
+      this.Phone = data.Phone;
+      this.Address = data.Address;
+    });
 
-    //fromEvent(document, 'click')
-    //.pipe(scan(count => count + 1, 0 ))
-    //.subscribe(count => console.log(`Clicked ${count} times`));
+  
+    this.GetCollections();
+    
+  }
+
+  test() {
+    alert('sdfsdf');
+  }
 
 
-//     var myChart = new Chart("MyChart", {
-//       type: 'bar',
-//       data: {
-//           labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
-//           datasets: [{
-//               label: '# of Votes',
-//               data: [12, 19, 3, 5, 2, 3],
-//               backgroundColor: [
-//                   'rgba(255, 99, 132, 0.2)',
-//                   'rgba(54, 162, 235, 0.2)',
-//                   'rgba(255, 206, 86, 0.2)',
-//                   'rgba(75, 192, 192, 0.2)',
-//                   'rgba(153, 102, 255, 0.2)',
-//                   'rgba(255, 159, 64, 0.2)'
-//               ],
-//               borderColor: [
-//                   'rgba(255, 99, 132, 1)',
-//                   'rgba(54, 162, 235, 1)',
-//                   'rgba(255, 206, 86, 1)',
-//                   'rgba(75, 192, 192, 1)',
-//                   'rgba(153, 102, 255, 1)',
-//                   'rgba(255, 159, 64, 1)'
-//               ],
-//               borderWidth: 1
-//           }]
-//       },
-//       options: {
-//           scales: {
-//               yAxes: [{
-//                   ticks: {
-//                       beginAtZero: true
-//                   }
-//               }]
-//           }
-//       }
-//   });
+  GetCollections() {
+    this.Backend.get('api/Admin/GetCollections').then(data => {
+      this.Collections = data;
 
+    });
+  }
+  
+  deleteCollection(id) {
+    var r = confirm("are sure of the deleting process ?");
+    if (r == true) {
+      this.Backend.post('api/Admin/DeleteCollection?Id=' + id, null).then(data => {
+        if (data == true) {
+          this.GetCollections();
+        }
+      });
+    } 
 
   }
 
-  // get testDataProp() {
-  //   return "fff";
-  // }
+  EditAdminInfoSucess: any = null;
+  EditAdminInfo(Email/*FacebookURL,InstagramURL*/,Phone, Address) {
+    
+    this.Backend.post('api/Admin/EditAdminInfo?Email=' + Email + '&Phone=' + Phone + '&Address=' + Address, null).then(data => {
+      this.EditAdminInfoSucess = data;
+    });
+  }
 
 
-  // public downlodePDF() {
-  //   var table = document.getElementById("table");
-  //   const doc = new jsPDF()
-  //   autoTable(doc, { html: '#table', startY: 30, styles: { halign: 'center', fillColor: [22, 160, 133] } });
-  //   doc.save('table.pdf');
-  // }
+  pageNumber = 1; 
+  pagination(pNumber) {
+    if (this.feedbackData.slice((((pNumber - 1) * 10) - 1), (pNumber*10 -1) ).length > 0 || pNumber == 1 ) {
+      this.pageNumber = pNumber;
+      if (pNumber == 1) {
+        this.feedback = this.feedbackData.slice(0, 10);
+      } else {
+        this.feedback = this.feedbackData.slice((((pNumber - 1) * 10) - 1), (pNumber * 10 - 1) );
 
-  
+      }
+    }
+  }
+
+  Next() {
+    if (this.feedbackData.slice((((this.pageNumber) * 10) - 1), (this.pageNumber + 1  * 10 - 1) ).length > 0) {
+      this.pageNumber = this.pageNumber + 1;
+      this.feedback = this.feedbackData.slice((((this.pageNumber - 1) * 10) - 1), (this.pageNumber * 10 - 1));
+    }
+
+  }
+
+  Previous() {
+
+    if (this.pageNumber > 1 ) {
+      this.pageNumber = this.pageNumber - 1;
+
+      if (this.pageNumber == 1) {
+        this.feedback = this.feedbackData.slice(0, 10);
+      } else {
+        this.feedback = this.feedbackData.slice((((this.pageNumber - 1) * 10) - 1), (this.pageNumber * 10 - 1));
+      }
+    }
+  }
 
   
 }

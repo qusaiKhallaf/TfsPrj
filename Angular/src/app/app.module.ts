@@ -22,6 +22,8 @@ import { VisitorComponent } from './shareComponent/visitor/visitor.component';
 import { VisitorDetailsComponent } from './shareComponent/visitor-details/visitor-details.component';
 import { VisitorPageComponent } from './visitor/visitor-page/visitor-page.component';
 
+import { FormsModule } from '@angular/forms';
+
 
 export function HttpLoaderFactory(http: HttpClient): TranslateHttpLoader {
   return new TranslateHttpLoader(http);
@@ -47,6 +49,7 @@ export function HttpLoaderFactory(http: HttpClient): TranslateHttpLoader {
     MatModule,
     // MatTreeModule,
     // MatIconModule,
+    FormsModule,
     TranslateModule.forRoot({
       loader: {
           provide: TranslateLoader,

@@ -1,106 +1,154 @@
-<p id="a">test works!</p>
+<form style="padding:10px">
+  <h1> collection Section </h1>
+  <div class="form-group p-1">
+    <label for="collectionName">collectionName</label>
+    <input type="email" class="form-control" id="collectionName" placeholder="collection Name">
+  </div>
 
-<!-- 
-<animation></animation> -->
+  <div class="form-row">
+    <div class="form-group col-md-6">
+      <label for="mainImage">Main Image</label>
+      <input type="file" class="form-control-file" id="mainImage">
+    </div>
+    <div class="p-1"> </div>
+    <div class="form-group col-md-6">
+      <label for="collectionImages">collection Images</label>
+      <input type="file" class="form-control-file" id="collectionImages" multiple>
+    </div>
+  </div>
+
+  <div class="form-group p-1">
+    <label for="exampleInputPassword1">description</label>
+    <textarea class="form-control" id="description" rows="3"></textarea>
+  </div>
+
+  <div class="btn btn-primary" (click)="test();">Add collection</div>
+</form>
+
+<hr />
+
+<!--style="overflow-y:hidden ; height:700px"-->
+<div class="container-fluid">
+  <div class="row">
+    <div class="col col-lg-4 p-1" *ngFor="let item of Collections">
+      <div class="card" style="width: 22rem;">
+        <img class="card-img-top" src="{{item.Image}}" alt="Card image cap">
+        <div class="card-body">
+          <h5 class="card-title">{{item.Name}}</h5>
+          <p class="card-text">{{item.Description}}</p>
+          <div class="btn btn-primary" (click)="deleteCollection(item.Id)">delete</div>
+        </div>
+      </div>
+    </div>
+  </div>
 
 
-<!-- <div id="divChart">
 
-<canvas id="MyChart"></canvas>
+
 </div>
-<button mat-button> button1 </button>
+
+<form style="padding:10px">
+  <h1> Information section </h1>
 
 
-<barchart></barchart>
-
-<table style="width:100% ;  border: 1px solid black;" id="table">
-    <tr style="background-color: blueviolet;">
-    <th>first name </th>
-    <th>last name </th>
-    <th>age </th>
-    <th>cousre</th>
-    </tr>
-    <tr>
-        <td>
-            qsaui  khallaf sddsfsdfsdfsdfsdfsdfsdfsdfs
-        </td>
-        <td>
-            khallaf sddsfsdfsdfsdfsdfsdfsdfsdfs
-        </td>
-        <td>
-            23qsaui  khallaf sddsfsdfsdfsdfsdfsdfsdfsdfs
-        </td>
-        <td>
-            tttttqsaui  khallaf sddsfsdfsdfsdfsdfsdfsdfsdfs
-        </td>
-    </tr>
-    <tr>
-        <td>
-            qsaui
-        </td>
-        <td>
-            khallaf
-        </td>
-        <td>
-            23
-        </td>
-        <td>
-            ttttt
-        </td>
-    </tr>
-
-</table>
-  <button mat-button   color="primary" (click)="downlodePDF()" > EXPORT TO PDF  </button>
-
-  <button mat-raised-button color="buttonSuccess">Success</button>
-
-  <mat-card class="example-card">
-    <mat-card-header>
-      <div mat-card-avatar class="example-header-image"></div>
-      <mat-card-title>Shiba Inu</mat-card-title>
-      <mat-card-subtitle>Dog Breed</mat-card-subtitle>
-    </mat-card-header>
-    <img mat-card-image src="https://material.angular.io/assets/img/examples/shiba2.jpg" alt="Photo of a Shiba Inu">
-    <mat-card-content>
-      <p>
-        The Shiba Inu is the smallest of the six original and distinct spitz breeds of dog from Japan.
-        A small, agile dog that copes very well with mountainous terrain, the Shiba Inu was originally
-        bred for hunting.
-      </p>
-    </mat-card-content>
-    <mat-card-actions>
-      <button mat-button>LIKE</button>
-      <button mat-button>SHARE</button>
-    </mat-card-actions>
-  </mat-card>
-
-  
-
-  <div fxLayout="row" fxLayoutAlign="space-between start" style="max-height:250px ; overflow-y:auto" fxLayoutGap="25px" >
-    <div>
-      عناصر تم ادخالها
-    
+  <div class="form-row">
+    <div class="form-group col-md-5">
+      <label for="email">Email</label>
+      <input type="email" class="form-control" value="{{Email}}" #_Email placeholder="Email">
     </div>
 
-    <div>
-      عناصر موجودة سابقاً
-     
+    <div class="form-group col-md-5">
+      <label for="Phone">Phone</label>
+      <input type="text" class="form-control" value="{{Phone}}" #_Phone placeholder="Phone">
     </div>
 
-    <div>
-      عناصر غير صالحة
-    </div>
-  </div> -->
+  </div>
 
-  <!--<div>
-    <h2>{{ 'HELLO.h1' | translate: { user: "qusai 1 " } }}</h2>
-    <p>
-      {{ 'HELLO.h1' | translate: { user: "qusai 2 " } }}
-    </p>
-    <label for="">
-      {{ 'HELLO.h1' | translate: { user: "qusai  3 " } }}
-      <select #langselect (change)="translate.use(langselect.value)">
-        <option *ngFor="let lang of translate.getLangs()" [value]="lang"> {{lang}}</option>
-      </select>
-    </label>
+  <div class="form-row">
+    <div class="form-group col-md-5">
+      <label for="address">Address</label>
+      <input type="text" class="form-control" value="{{Address}}" #_Address placeholder="address">
+    </div>
+  </div>
+  <!--<div class="form-row">
+    <div class="form-group col-md-5">
+    <label for="instagramURL">instagram URL</label>
+    <input type="text" class="form-control" value="{{InstagramURL}}" #_InstagramURL placeholder="instagram URL">
+  </div>
+    <div class="form-group col-md-5">
+    <label for="facebookURL">facebook URL</label>
+    <input type="text" class="form-control" value="{{FacebookURL}}" #_FacebookURL  placeholder="facebook URL">
+  </div>
+
   </div>-->
+  <br />
+  <div class="alert alert-success col col-lg-4 p-1" role="alert" *ngIf="EditAdminInfoSucess == true">
+    Editing completed successfully
+  </div>
+
+  <div class="alert alert-danger col col-lg-4 p-1" role="alert" *ngIf="EditAdminInfoSucess == false">
+    Error
+  </div>
+
+
+  <div class="p-1"></div>
+  <!-- _FacebookURL.value, _InstagramURL.value-->
+  <div class="btn btn-primary" (click)="EditAdminInfo(_Email.value  , _Phone.value , _Address.value);">Edit Your info</div>
+</form>
+
+<hr />
+
+<h1>feedback Section</h1>
+<div class="table-responsive">
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th class="th-lg">Email</th>
+        <th class="th-lg">subject</th>
+        <th class="th-lg">Message</th>
+      </tr>
+    </thead>
+    <tbody>
+
+      <tr *ngFor="let item of feedback">
+        <th scope="row">{{item.Subject}}</th>
+        <td>{{item.Message}}</td>
+        <td>{{item.PhoneNumber}}</td>
+        <td>{{item.Email}}</td>
+      </tr>
+    </tbody>
+    <!--Table body-->
+
+  </table>
+
+  <nav aria-label="Page navigation example">
+    <ul class="pagination">
+      <li class="page-item">
+        <div class="page-link" aria-label="Previous" (click)="Previous()">
+          <span aria-hidden="true">&laquo;</span>
+          <span class="sr-only">Previous</span>
+        </div>
+      </li>
+
+      <li class="page-item"><a class="page-link" (click)="pagination(1);">1</a></li>
+      <li class="page-item"><a class="page-link" (click)="pagination(2);">2</a></li>
+      <li class="page-item"><a class="page-link" (click)="pagination(3);">3</a></li>
+      <li class="page-item"><a class="page-link" (click)="pagination(4);">4</a></li>
+      <li class="page-item"><a class="page-link" (click)="pagination(5);">5</a></li>
+
+
+      <li class="page-item">
+        <div class="page-link" aria-label="Next" (click)="Next()">
+          <span aria-hidden="true">&raquo;</span>
+          <span class="sr-only">Next</span>
+        </div>
+      </li>
+    </ul>
+  </nav>
+
+</div>
+
+
+
+
