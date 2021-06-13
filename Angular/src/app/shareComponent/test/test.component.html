@@ -1,153 +1,206 @@
-<form style="padding:10px">
-  <h1> collection Section </h1>
-  <div class="form-group p-1">
-    <label for="collectionName">collectionName</label>
-    <input type="email" class="form-control" id="collectionName" placeholder="collection Name">
-  </div>
 
-  <div class="form-row">
-    <div class="form-group col-md-6">
-      <label for="mainImage">Main Image</label>
-      <input type="file" class="form-control-file" id="mainImage">
+<div style="background-color:#f5f5f5 ;height:100% ;width:100%" *ngIf="Islogin == false">
+
+  <form class="form-signin p-5 col col-lg-4" style="height:auto ; margin:auto">
+    <img class="mb-4" src="https://getbootstrap.com/docs/4.0/assets/brand/bootstrap-solid.svg" alt="" width="72" height="72">
+    <h1 class="h3 mb-3 font-weight-normal">Please sign in</h1>
+    <label for="inputEmail" class="sr-only">Email address</label>
+    <input type="text" #LoginUserName class="form-control" placeholder="Email address" required="" autofocus="">
+    <label for="inputPassword" class="sr-only">Password</label>
+    <input type="password" #LoginPassword class="form-control" placeholder="Password" required="">
+    <br />
+
+    <div class="alert alert-warning col col-lg-4 p-1" role="alert" *ngIf="NotCorrectPasswordAndUserName == true">
+      wrong UserName or Password
     </div>
-    <div class="p-1"> </div>
-    <div class="form-group col-md-6">
-      <label for="collectionImages">collection Images</label>
-      <input type="file" class="form-control-file" id="collectionImages" multiple>
+
+    <button class="btn btn-lg btn-primary btn-block" type="submit" (click)="Login(LoginUserName.value , LoginPassword.value )">Sign in</button>
+    <p class="mt-5 mb-3 text-muted">© 2021-2022</p>
+  </form>
+</div>
+<!--style="background-color:#f5f5f5"-->
+<div class="container-fluid" *ngIf="Islogin == true">
+  <form style="padding:10px" class="needs-validation" novalidate>
+    <h1 class="fw-bold"> collection Section </h1>
+    <div class="form-group p-1 col col-lg-4 has-error ">
+      <input type="text" class="form-control" #_collectionName placeholder="collection Name">
     </div>
-  </div>
 
-  <div class="form-group p-1">
-    <label for="exampleInputPassword1">description</label>
-    <textarea class="form-control" id="description" rows="3"></textarea>
-  </div>
+    <div class="container-fluid row">
+      <div class="form-group col col-lg-4 p-1">
+        <label class="fw-bold" style="padding-right:7px">Main Image</label>
+        <input type="file" onclick="this.value = null" id="inputfile" class="inputfile"
+               (change)="fileInputChange($event)" name="uploadFile"
+               accept="image/*">
+        <button mat-icon-button *ngIf="file != null" (click)="clear(1)" class="btn-postion"> <mat-icon class="icon">close</mat-icon></button>
+      </div>
+      <div class="form-group col col-lg-4 p-1">
+        <label class="fw-bold" style="padding-right:7px">collection Images</label>
+        <input type="file" onclick="this.value=null" id="inputfile2" class="inputfile2"
+               (change)="fileInputChange2($event)" name="uploadFile2" multiple="multiple"
+               accept="image/*" required>
+        <button mat-icon-button *ngIf="file2 != null" (click)="clear(2)" class="btn-postion"> <mat-icon class="icon">close</mat-icon></button>
+      </div>
+    </div>
+    <div class="form-group p-1">
+      <textarea class="form-control" #_description rows="3" placeholder="Description"></textarea>
+    </div>
+    <div class="alert alert-success col col-lg-4 p-1" role="alert" *ngIf="AddCollectionStatus == 1">
+      Add Collection completed successfully
+    </div>
 
-  <div class="btn btn-primary" (click)="test();">Add collection</div>
-</form>
+    <div class="alert alert-warning col col-lg-4 p-1" role="alert" *ngIf="AddCollectionStatus == 2">
+      wrong password "enter the password correctly to complete the process"
+    </div>
+    <div class="alert alert-danger col col-lg-4 p-1" role="alert" *ngIf="AddCollectionStatus == 3">
+      Error
+    </div>
+    <div class="form-group p-1 col col-lg-4 p-1">
+      <input type="password" class="form-control" #_CollectionPassword placeholder="password">
+    </div>
 
-<hr />
+    <div class="form-group p-1 col col-lg-4 p-1">
+      <button class="btn btn-primary" type="submit" (click)="AddCollection(_collectionName.value , _description.value , _CollectionPassword.value);">Add collection</button>
+    </div>
+  </form>
 
-<!--style="overflow-y:hidden ; height:700px"-->
-<div class="container-fluid">
-  <div class="row">
-    <div class="col col-lg-4 p-1" *ngFor="let item of Collections">
-      <div class="card" style="width: 22rem;">
-        <img class="card-img-top" src="{{item.Image}}" alt="Card image cap">
-        <div class="card-body">
-          <h5 class="card-title">{{item.Name}}</h5>
-          <p class="card-text">{{item.Description}}</p>
-          <div class="btn btn-primary" (click)="deleteCollection(item.Id)">delete</div>
+  <hr />
+  <form>
+    <div id="bottom" class="form-group p-1 col col-lg-4 p-1" *ngIf="_CollectionToDelete != null">
+      <div class="row">
+        <div class="col-8">
+          <input type="password" class="form-control p-1" #_DeleteCollectionPassword placeholder="password">
+        </div>
+        <div class="btn btn-primary col-2 bg-danger" (click)="deleteCollection(_DeleteCollectionPassword.value)">delete</div>
+
+      </div>
+    </div>
+
+    <div class="alert alert-success col col-lg-4 p-1" role="alert" *ngIf="DeleteCollectionStatus == 1">
+      Delete Collection completed successfully
+    </div>
+
+    <div class="alert alert-warning col col-lg-4 p-1" role="alert" *ngIf="DeleteCollectionStatus == 2">
+      wrong password "enter the password correctly to complete the process"
+    </div>
+    <div class="alert alert-danger col col-lg-4 p-1" role="alert" *ngIf="DeleteCollectionStatus == 3">
+      Error
+    </div>
+
+  </form>
+  <form style="padding:10px">
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col .col-xl-4 .col-lg-4 .col-md-3" *ngFor="let item of Collections" style="margin-bottom:5px">
+          <div class="card">
+            <img class="card-img-top" src="{{item.Image}}" alt="Card image cap">
+            <div class="card-body">
+              <h5 class="card-title">{{item.Name}}</h5>
+              <p class="card-text">{{item.Description}}</p>
+              <!--<div class="btn btn-primary" (click)="deleteCollection(item.Id)">delete</div>-->
+              <a href="#bottom"> <div class="btn btn-primary" (click)="CollectionToDelete(item.Id)">delete</div></a>
+            </div>
+          </div>
         </div>
       </div>
     </div>
+  </form>
+  <hr />
+  <form style="padding:10px">
+    <h1 class="fw-bold"> Information section </h1>
+    <div class="form-row p-1">
+      <div class="form-group col col-md-5 p-1">
+        <label for="email" class="fw-bold">Email</label>
+        <input type="email" class="form-control" value="{{Email}}" #_Email placeholder="Email">
+      </div>
+      <div class="form-group col col-md-5 p-1">
+        <label for="Phone" class="fw-bold">Phone</label>
+        <input type="text" class="form-control" value="{{Phone}}" #_Phone placeholder="Phone">
+      </div>
+    </div>
+    <div class="form-row p-1">
+      <div class="form-group col col-md-5 p-1">
+        <label for="address" class="fw-bold">Address</label>
+        <input type="text" class="form-control" value="{{Address}}" #_Address placeholder="address">
+      </div>
+    </div>
+    <div class="form-row p-1">
+      <div class="form-group col col-md-5 p-1">
+        <label for="instagramURL" class="fw-bold">instagram URL</label>
+        <input type="text" class="form-control" value="{{InstagramURL}}" #_InstagramURL placeholder="instagram URL">
+      </div>
+      <div class="form-group col col-md-5 col-sm-5 p-1">
+        <label for="facebookURL" class="fw-bold">facebook URL</label>
+        <input type="text" class="form-control" value="{{FacebookURL}}" #_FacebookURL placeholder="facebook URL">
+      </div>
+    </div>
+
+    <div class="alert alert-success col" role="alert" *ngIf="EditAdminInfoSucess == 1">
+      Editing completed successfully
+    </div>
+    <div class="alert alert-warning col" role="alert" *ngIf="EditAdminInfoSucess == 2">
+      wrong password "enter the password correctly to complete the process"
+    </div>
+    <div class="alert alert-danger col" role="alert" *ngIf="EditAdminInfoSucess == 3">
+      Error
+    </div>
+
+    <div class="form-group p-1 col-md-5 p-1">
+      <input type="password" class="form-control" #_EditAdminInfoPassword placeholder="password">
+    </div>
+
+    <div class="btn btn-primary" (click)="EditAdminInfo(_Email.value  , _FacebookURL.value, _InstagramURL.value , _Phone.value , _Address.value , _EditAdminInfoPassword.value);">Edit Your info</div>
+  </form>
+  <hr />
+
+
+  <h1 class="fw-bold">feedback Section</h1>
+  <div class="table-responsive">
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th class="th-lg">Name</th>
+          <th class="th-lg">Email</th>
+          <th class="th-lg">subject</th>
+          <th class="th-lg">Message</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let item of feedback">
+          <th scope="row">{{item.Subject}}</th>
+          <td>{{item.Message}}</td>
+          <td>{{item.PhoneNumber}}</td>
+          <td>{{item.Email}}</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <nav aria-label="Page navigation example">
+      <ul class="pagination">
+        <li class="page-item">
+          <div class="page-link" aria-label="Previous" (click)="Previous()">
+            <span aria-hidden="true">&laquo;</span>
+            <span class="sr-only">Previous</span>
+          </div>
+        </li>
+        <li class="page-item"><a class="page-link" (click)="pagination(1);">1</a></li>
+        <li class="page-item"><a class="page-link" (click)="pagination(2);">2</a></li>
+        <li class="page-item"><a class="page-link" (click)="pagination(3);">3</a></li>
+        <li class="page-item"><a class="page-link" (click)="pagination(4);">4</a></li>
+        <li class="page-item"><a class="page-link" (click)="pagination(5);">5</a></li>
+        <li class="page-item">
+          <div class="page-link" aria-label="Next" (click)="Next()">
+            <span aria-hidden="true">&raquo;</span>
+            <span class="sr-only">Next</span>
+          </div>
+        </li>
+      </ul>
+    </nav>
   </div>
-
-
-
-
 </div>
 
-<form style="padding:10px">
-  <h1> Information section </h1>
 
 
-  <div class="form-row">
-    <div class="form-group col-md-5">
-      <label for="email">Email</label>
-      <input type="email" class="form-control" value="{{Email}}" #_Email placeholder="Email">
-    </div>
-
-    <div class="form-group col-md-5">
-      <label for="Phone">Phone</label>
-      <input type="text" class="form-control" value="{{Phone}}" #_Phone placeholder="Phone">
-    </div>
-
-  </div>
-
-  <div class="form-row">
-    <div class="form-group col-md-5">
-      <label for="address">Address</label>
-      <input type="text" class="form-control" value="{{Address}}" #_Address placeholder="address">
-    </div>
-  </div>
-  <!--<div class="form-row">
-    <div class="form-group col-md-5">
-    <label for="instagramURL">instagram URL</label>
-    <input type="text" class="form-control" value="{{InstagramURL}}" #_InstagramURL placeholder="instagram URL">
-  </div>
-    <div class="form-group col-md-5">
-    <label for="facebookURL">facebook URL</label>
-    <input type="text" class="form-control" value="{{FacebookURL}}" #_FacebookURL  placeholder="facebook URL">
-  </div>
-
-  </div>-->
-  <br />
-  <div class="alert alert-success col col-lg-4 p-1" role="alert" *ngIf="EditAdminInfoSucess == true">
-    Editing completed successfully
-  </div>
-
-  <div class="alert alert-danger col col-lg-4 p-1" role="alert" *ngIf="EditAdminInfoSucess == false">
-    Error
-  </div>
-
-
-  <div class="p-1"></div>
-  <!-- _FacebookURL.value, _InstagramURL.value-->
-  <div class="btn btn-primary" (click)="EditAdminInfo(_Email.value  , _Phone.value , _Address.value);">Edit Your info</div>
-</form>
-
-<hr />
-
-<h1>feedback Section</h1>
-<div class="table-responsive">
-  <table class="table">
-    <thead>
-      <tr>
-        <th>Name</th>
-        <th class="th-lg">Email</th>
-        <th class="th-lg">subject</th>
-        <th class="th-lg">Message</th>
-      </tr>
-    </thead>
-    <tbody>
-
-      <tr *ngFor="let item of feedback">
-        <th scope="row">{{item.Subject}}</th>
-        <td>{{item.Message}}</td>
-        <td>{{item.PhoneNumber}}</td>
-        <td>{{item.Email}}</td>
-      </tr>
-    </tbody>
-    <!--Table body-->
-
-  </table>
-
-  <nav aria-label="Page navigation example">
-    <ul class="pagination">
-      <li class="page-item">
-        <div class="page-link" aria-label="Previous" (click)="Previous()">
-          <span aria-hidden="true">&laquo;</span>
-          <span class="sr-only">Previous</span>
-        </div>
-      </li>
-
-      <li class="page-item"><a class="page-link" (click)="pagination(1);">1</a></li>
-      <li class="page-item"><a class="page-link" (click)="pagination(2);">2</a></li>
-      <li class="page-item"><a class="page-link" (click)="pagination(3);">3</a></li>
-      <li class="page-item"><a class="page-link" (click)="pagination(4);">4</a></li>
-      <li class="page-item"><a class="page-link" (click)="pagination(5);">5</a></li>
-
-
-      <li class="page-item">
-        <div class="page-link" aria-label="Next" (click)="Next()">
-          <span aria-hidden="true">&raquo;</span>
-          <span class="sr-only">Next</span>
-        </div>
-      </li>
-    </ul>
-  </nav>
-
-</div>
 
 
 

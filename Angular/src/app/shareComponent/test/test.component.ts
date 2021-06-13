@@ -1,19 +1,7 @@
-import { element, browser } from 'protractor';
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { BackendServiceService } from './../../Services/backend-service.service';
-import {Chart} from 'node_modules/chart.js';
 
-import jsPDF from 'jspdf'
-// import jsPDF = require('jspdf') // // typescript without esModuleInterop flag
-// import jsPDF from 'yworks-pdf' // using yworks fork
-// import jsPDF from 'jspdf/dist/jspdf.node.debug' // for nodejs
-import autoTable from 'jspdf-autotable'
-import { fromEvent } from 'rxjs';
-import { scan } from 'rxjs/operators';
-
-import {TranslateService} from '@ngx-translate/core';
-import { transition } from '@angular/animations';
-
+import * as $ from "jquery";
 @Component({
   selector: 'test',
   templateUrl: './test.component.html',
@@ -48,14 +36,41 @@ export class TestComponent implements OnInit {
   Phone: any;
   Address: any;
   Collections: any = [];
+  Islogin: boolean = false;
+
   ngOnInit(): void {
+    
+  }
+
+
+  NotCorrectPasswordAndUserName: boolean = false;
+  Login(userName, password) {
+    //alert($("#test").val());
+  
+    var loginData = {
+      UserName: userName,
+      Password: password,
+    }
+    this.Backend.post('api/Admin/Login', loginData).then(data => {
+      if (data == true) {
+        this.NotCorrectPasswordAndUserName = false;
+        this.Islogin = true;
+        this.init();
+      } else {
+        this.NotCorrectPasswordAndUserName = true;
+      }
+     
+      
+
+    });
+  }
+
+  init() {
     this.Backend.get('api/Admin/GetFeedback').then(data => {
       this.feedbackData = data;
       this.feedback = data.slice(0, 10);
     });
 
-
-    
     this.Backend.get('api/Admin/GetAdminInfo').then(data => {
       this.AdminInfo = data;
       this.Email = data.Email;
@@ -65,13 +80,7 @@ export class TestComponent implements OnInit {
       this.Address = data.Address;
     });
 
-  
     this.GetCollections();
-    
-  }
-
-  test() {
-    alert('sdfsdf');
   }
 
 
@@ -81,25 +90,48 @@ export class TestComponent implements OnInit {
 
     });
   }
-  
-  deleteCollection(id) {
+
+  _CollectionToDelete = null;
+  CollectionToDelete(id) {
+    this.DeleteCollectionStatus = null;
+    this._CollectionToDelete = id;
+  }
+  DeleteCollectionStatus = null;
+  deleteCollection(password) {
+    this.DeleteCollectionStatus = null;
     var r = confirm("are sure of the deleting process ?");
     if (r == true) {
-      this.Backend.post('api/Admin/DeleteCollection?Id=' + id, null).then(data => {
-        if (data == true) {
+      var collectionToDeleteData = {
+        Id: this._CollectionToDelete,
+        Password: password,
+      }
+      this.Backend.put('api/Admin/DeleteCollection', collectionToDeleteData , []).then(data => {
+        if (data == 1) 
           this.GetCollections();
-        }
+
+        this._CollectionToDelete = null;
+        this.DeleteCollectionStatus = data;
+         
       });
     } 
 
   }
 
   EditAdminInfoSucess: any = null;
-  EditAdminInfo(Email/*FacebookURL,InstagramURL*/,Phone, Address) {
-    
-    this.Backend.post('api/Admin/EditAdminInfo?Email=' + Email + '&Phone=' + Phone + '&Address=' + Address, null).then(data => {
-      this.EditAdminInfoSucess = data;
-    });
+  EditAdminInfo(Email, FacebookURL, InstagramURL, Phone, Address, Password) {
+    if (Password != "") {
+      var AdminInfo = {
+        Email: Email,
+        FacebookURL: FacebookURL,
+        InstagramURL: InstagramURL,
+        Phone: Phone,
+        Address: Address,
+        Password: Password
+      }
+      this.Backend.post('api/Admin/EditAdminInfo', AdminInfo).then(data => {
+        this.EditAdminInfoSucess = data;
+      });
+    }
   }
 
 
@@ -137,7 +169,81 @@ export class TestComponent implements OnInit {
     }
   }
 
-  
+  AddCollectionStatus = null;
+
+  //_CollectionPassword;
+  allFile: any = [];
+  AddCollection(Name, Description, Password) {
+    if (Password != "" && Description != "" && Name != "") {
+      if (this.file != null && this.file2 != null) {
+        var collectionInfo = {
+          Name: Name,
+          Description: Description,
+          Password: Password
+        }
+        this.allFile.push(this.file);
+        for (var i = 0; i < this.file2.length; i++) {
+          this.allFile.push(this.file2[i])
+        }
+        this.Backend.put('api/Admin/AddCollection', collectionInfo, this.allFile).then(data => {
+          $("#inputfile").val(null);
+          $("#inputfile2").val(null);
+          this.clearFile(1);
+          this.clearFile(2);
+          this.AddCollectionStatus = data;
+          this.GetCollections();
+
+        });
+      }
+    }
+  }
+
+
+  clear(a) {
+    if (a == 1)
+      $("#inputfile").val(null);
+    else
+      $("#inputfile2").val(null);
+  }
+
+
+  file = null;
+  fileName = null;
+
+  file2 = null;
+  fileName2 = null;
+
+  clearFile(data) {
+    if (data == 1) {
+      this.file = null;
+      this.fileName = '';
+    } else {
+      this.file2 = null;
+      this.fileName2 = '';
+    }
+  }
+
+
+  fileInputChange(file) {
+    this.clearFile(1);
+    if (file?.target?.files[0]?.name) {
+      this.file = file.target.files[0];
+      this.fileName = file.target.files[0].name;
+    }
+  }
+
+
+  fileInputChange2(file2) {
+    this.clearFile(2);
+    if (file2?.target?.files[0]?.name) {
+      this.file2 = file2.target.files;
+
+     
+      this.fileName2 = file2.target.files[0].name;
+    }
+  }
+
+
 }
 
 
